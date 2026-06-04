@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dinner Decider</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<main>
+    <header class="hero">
+        <div class="hero-copy">
+            <p class="eyebrow">Dinner inspiration</p>
+            <h1>Dinner Decider</h1>
+            <p class="hero-text">Choose your vibe, then let the app pick a delicious dinner idea with a recipe and image.</p>
+        </div>
+    </header>
+
+    <section class="form-panel">
+        <h2>Build your meal plan</h2>
+        <p class="section-subtitle">Use the controls below to personalize the dish, or let Dinner Decider choose for you.</p>
+
+        <form action="/generate" method="GET">
+
+<div class="field-group">
+    <label for="cuisine-select">Cuisine</label>
+    <select id="cuisine-select" required onchange="updateCuisineValue()">
+        <option value="" disabled selected>Select a cuisine</option>
+        <option value="Asian">Asian</option>
+        <option value="Mexican">Mexican</option>
+        <option value="American">American</option>
+        <option value="Italian">Italian</option>
+        <option value="Indian">Indian</option>
+        <option value="Mediterranean">Mediterranean</option>
+        <option value="Thai">Thai</option>
+        <option value="Random">Random</option>
+        <option value="Other">Other</option>
+    </select>
+    <input
+        type="text"
+        id="cuisine-custom"
+        placeholder="Type your cuisine"
+        style="display:none; margin-top: 12px;"
+        oninput="updateCuisineCustom()"
+        aria-label="Custom cuisine">
+    <input type="hidden" name="cuisine" id="cuisine-hidden" required>
+</div>
+
+<div class="field-group">
+    <label for="difficulty">Difficulty</label>
+    <select id="difficulty" required onchange="updateDifficultyValue()">
+        <option value="" disabled selected>Select difficulty</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+    </select>
+    <input type="hidden" name="difficulty" id="difficulty-hidden" required>
+</div>
+
+<div class="slider-group">
+    <label for="prep-time-range">Prep Time</label>
+    <input
+        type="range"
+        id="prep-time-range"
+        min="5"
+        max="60"
+        step="5"
+        value="20"
+        oninput="updatePrepTimeLabel(this.value)"
+        onchange="updatePrepTimeLabel(this.value)">
+    <span id="prep-time-label">under 20 minutes</span>
+    <input type="hidden" name="prep time" id="prep-time-hidden" value="under 20 minutes">
+</div>
+
+<div class="button-row">
+    <button type="button" onclick="chooseForMe()">Choose for me</button>
+    <button type="submit">Generate Dinner Idea</button>
+</div>
+
+</form>
+
+<script>
+    function updatePrepTimeLabel(value) {
+        let label;
+        let hiddenValue;
+
+        if (Number(value) === 60) {
+            label = "No time limit";
+            hiddenValue = "no time limit";
+        } else {
+            label = `under ${value} minutes`;
+            hiddenValue = `under ${value} minutes`;
+        }
+
+        document.getElementById("prep-time-label").textContent = label;
+        document.getElementById("prep-time-hidden").value = hiddenValue;
+    }
+
+    updatePrepTimeLabel(document.getElementById("prep-time-range").value);
+    updateCuisineValue();
+    updateDifficultyValue();
+
+    function updateCuisineValue() {
+        const select = document.getElementById("cuisine-select");
+        const custom = document.getElementById("cuisine-custom");
+        const hidden = document.getElementById("cuisine-hidden");
+
+        if (select.value === "Other") {
+            custom.style.display = "block";
+            hidden.value = custom.value.trim();
+        } else {
+            custom.style.display = "none";
+            hidden.value = select.value;
+        }
+    }
+
+    function updateDifficultyValue() {
+        const select = document.getElementById("difficulty");
+        const hidden = document.getElementById("difficulty-hidden");
+        hidden.value = select.value;
+    }
+
+    function updateCuisineCustom() {
+        const custom = document.getElementById("cuisine-custom");
+        const hidden = document.getElementById("cuisine-hidden");
+        hidden.value = custom.value.trim();
+    }
+
+    function chooseForMe() {
+        const cuisines = ["Asian", "Mexican", "American", "Italian", "Indian", "Mediterranean", "Thai"];
+        const difficulties = ["easy", "medium", "hard"];
+        const prepTimes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+
+        const randomCuisine = cuisines[Math.floor(Math.random() * cuisines.length)];
+        const randomDifficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+        const randomPrep = prepTimes[Math.floor(Math.random() * prepTimes.length)];
+
+        document.getElementById("cuisine-hidden").value = randomCuisine;
+        document.getElementById("difficulty-hidden").value = randomDifficulty;
+        document.getElementById("prep-time-hidden").value = `under ${randomPrep} minutes`;
+
+        document.querySelector('form').submit();
+    }
+</script>
+
+{% if recipe %}
+
+<section class="output-card">
+    {% if recipe_image %}
+        <img src="{{ recipe_image }}" alt="{{ recipe.recipe_name }}" class="recipe-photo">
+    {% endif %}
+
+    <h2>{{ recipe.recipe_name }}</h2>
+
+    <p>
+        Prep Time: {{ recipe.prep_time }}
+    </p>
+
+    <h3>Ingredients</h3>
+    <ul>
+        {% for ingredient in recipe.ingredients %}
+            <li>{{ ingredient }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Instructions</h3>
+    <ol>
+        {% for step in recipe.instructions %}
+            <li>{{ step }}</li>
+        {% endfor %}
+    </ol>
+</section>
+
+{% endif %}
+
+</main>
+
+</body>
+</html>

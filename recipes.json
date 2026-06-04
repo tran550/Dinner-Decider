@@ -1,0 +1,34 @@
+{
+  "chicken": [
+    {
+      "name": "Chicken Fried Rice",
+      "ingredients": [
+        "Chicken",
+        "Rice",
+        "Eggs",
+        "Soy Sauce"
+      ],
+      "instructions": "Cook chicken, add rice and eggs."
+    },
+    {
+      "name": "Chicken Alfredo",
+      "ingredients": [
+        "Chicken",
+        "Pasta",
+        "Cream"
+      ],
+      "instructions": "Cook pasta and combine."
+    }
+  ],
+
+  "beef": [
+    {
+      "name": "Beef Tacos",
+      "ingredients": [
+        "Ground Beef",
+        "Tortillas"
+      ],
+      "instructions": "Cook beef and assemble tacos."
+    }
+  ]
+}
