@@ -23,11 +23,11 @@ jobs:
           script: |
             cd simple_devops_project
             git pull
-            sudo docker build -t my-flask-app .
-            sudo docker stop flask || true
-            sudo docker rm flask || true
+            sudo docker build -t dinner-decider .
+            sudo docker stop dinner-decider || true
+            sudo docker rm dinner-decider || true
             sudo docker run -d \
-              --name flask \
+              --name dinner-decider \
               -p 5000:5000 \
               -e GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" \
               -e UNSPLASH_KEY="${{ secrets.UNSPLASH_KEY }}" \
