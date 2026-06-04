@@ -178,14 +178,66 @@ form label {
 
 .slider-group {
     display: grid;
-    gap: 10px;
+    gap: 12px;
+}
+
+.slider-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.slider-label-row label,
+.slider-label-row span {
+    margin: 0;
 }
 
 #prep-time-label {
-    display: inline-block;
-    margin-top: 4px;
     font-weight: 600;
     color: var(--accent);
+}
+
+#prep-time-range {
+    width: 100%;
+    min-height: 48px;
+    appearance: none;
+    background: transparent;
+}
+
+#prep-time-range::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #ffe8db;
+}
+
+#prep-time-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 4px solid #fff;
+    margin-top: -7px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
+}
+
+#prep-time-range::-moz-range-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #ffe8db;
+}
+
+#prep-time-range::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
 }
 
 button[type='submit'] {

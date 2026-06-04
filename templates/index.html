@@ -31,7 +31,6 @@
         <option value="Italian">Italian</option>
         <option value="Indian">Indian</option>
         <option value="Mediterranean">Mediterranean</option>
-        <option value="Thai">Thai</option>
         <option value="Random">Random</option>
         <option value="Other">Other</option>
     </select>
@@ -57,7 +56,10 @@
 </div>
 
 <div class="slider-group">
-    <label for="prep-time-range">Prep Time</label>
+    <div class="slider-label-row">
+        <label for="prep-time-range">Prep Time</label>
+        <span id="prep-time-label">under 20 minutes</span>
+    </div>
     <input
         type="range"
         id="prep-time-range"
@@ -67,7 +69,6 @@
         value="20"
         oninput="updatePrepTimeLabel(this.value)"
         onchange="updatePrepTimeLabel(this.value)">
-    <span id="prep-time-label">under 20 minutes</span>
     <input type="hidden" name="prep time" id="prep-time-hidden" value="under 20 minutes">
 </div>
 
