@@ -75,12 +75,26 @@ def generate_recipe(cuisine, difficulty, prep_time):
         raise RuntimeError("Model did not return valid JSON. See server logs for model output.")
 
 def get_unsplash_image(recipe_name):
-    query = urllib.parse.quote(recipe_name)
+    query = urllib.parse.quote(f"{recipe_name} food")
     url = f"https://api.unsplash.com/search/photos?query={query}&per_page=1"
-    headers = {"Authorization": f"Client-ID {os.environ.get('UNSPLASH_KEY')}"}
-    r = requests.get(url, headers=headers)
-    data = r.json()
-    return data["results"][0]["urls"]["regular"]
+    key = os.environ.get('UNSPLASH_KEY')
+    if not key:
+        return "https://source.unsplash.com/featured/800x600/?food"
+
+    headers = {"Authorization": f"Client-ID {key}"}
+
+    try:
+        r = requests.get(url, headers=headers, timeout=10)
+        r.raise_for_status()
+        data = r.json()
+        results = data.get("results") or []
+        if results:
+            return results[0]["urls"]["regular"]
+    except requests.RequestException as e:
+        print("Unsplash request failed:", e)
+
+    # Fallback when no image is found or API fails
+    return "https://source.unsplash.com/featured/800x600/?food"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
