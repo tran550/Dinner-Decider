@@ -8,3 +8,4 @@ github_repo_url      = "https://github.com/brandontran/devops.git"
 gemini_api_key       = "YOUR_GEMINI_API_KEY_HERE"
 unsplash_access_key  = "YOUR_UNSPLASH_ACCESS_KEY_HERE"
 ssh_cidr             = "0.0.0.0/0"  # Restrict this to your IP in production
+ssh_key_name         = "YOUR_AWS_SSH_KEY_NAME_HERE"
