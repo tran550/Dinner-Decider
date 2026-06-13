@@ -10,23 +10,22 @@ systemctl enable --now docker
 systemctl enable --now nginx
 
 # Clone the repository and deploy
-cd /opt
 git clone "${repo_url}" dinner-decider || (cd dinner-decider && git pull origin main)
 cd dinner-decider
 
 # Build the Docker image
-docker build -t dinner-decider:latest .
+docker build -t dinner-decider .
 
 # Stop and remove old container if exists
-docker rm -f dinner-app || true
+docker rm -f dinner-decider || true
 
 # Run the container bound to localhost (nginx will proxy to it)
 docker run -d \
-  --name dinner-app \
+  --name dinner-decider \
   -p 127.0.0.1:5000:5000 \
   -e GEMINI_API_KEY="${gemini_key}" \
   -e UNSPLASH_KEY="${unsplash_key}" \
-  dinner-decider:latest
+  dinner-decider
 
 # Configure nginx to reverse proxy to the app
 cat > /etc/nginx/sites-available/dinner <<'NGINX_EOF'
