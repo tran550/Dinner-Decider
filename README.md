@@ -71,6 +71,37 @@ docker rmi dinner-decider
 docker container prune
 ```
 
+## Terraform Deployment (AWS)
+
+Deploy to AWS EC2 using Terraform. See [infra/README.md](infra/README.md) for detailed instructions.
+
+### Quick Start
+
+```bash
+cd infra
+cp example.tfvars terraform.tfvars
+# Edit terraform.tfvars with your API keys and GitHub repo URL
+terraform init
+terraform plan -var-file="terraform.tfvars"
+terraform apply -var-file="terraform.tfvars"
+```
+
+This will:
+- Launch an EC2 instance running Ubuntu 22.04
+- Clone your repository
+- Build and deploy the Docker image
+- Expose the app at port 5000
+
+### Access your app
+
+Terraform outputs the app URL. Visit it in your browser.
+
+### Cleanup
+
+```bash
+terraform destroy -var-file="terraform.tfvars"
+```
+
 ## Usage
 
 1. Visit `http://localhost:5000`
