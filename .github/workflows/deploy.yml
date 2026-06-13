@@ -21,7 +21,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
-            cd dinner-decider
+            cd ../../dinner-decider
             git pull
             sudo docker build -t dinner-decider .
             sudo docker stop dinner-decider || true
