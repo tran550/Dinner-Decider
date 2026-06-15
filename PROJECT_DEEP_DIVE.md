@@ -11,9 +11,13 @@ When a user submits their preferences, the Flask application sends a request to 
 ## Architecture
 
 Infrastructure Diagram
+
 ![Infrastructure Diagram](/diagrams/Dinner_decider_infra.drawio.png)
 
+
+
 Deployment Diagram
+
 ![Deployment Diagram](/diagrams/Dinner_Decider_Deployment.drawio.png)
 
 ## Request Flow
