@@ -89,7 +89,22 @@ def get_unsplash_image(recipe_name):
         data = r.json()
         results = data.get("results") or []
         if results:
-            return results[0]["urls"]["regular"]
+            first = results[0]
+            # preferred: object with 'urls' dict
+            if isinstance(first, dict):
+                urls = first.get("urls") or {}
+                # prefer common sizes in order
+                for key_name in ("regular", "full", "small", "thumb"):
+                    if urls.get(key_name):
+                        return urls[key_name]
+                # if urls exists but keys missing, try any value
+                if urls:
+                    for v in urls.values():
+                        return v
+            # if API returned a plain string or unexpected structure, coerce to string
+            if isinstance(first, str):
+                return first
+            return str(first)
     except requests.RequestException as e:
         print("Unsplash request failed:", e)
 
