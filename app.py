@@ -6,6 +6,7 @@ import os
 import re
 import urllib.parse
 import requests
+from jsonschema import validate, ValidationError
 
 load_dotenv()
 
@@ -60,19 +61,51 @@ def generate_recipe(cuisine, difficulty, prep_time):
         config={"response_mime_type": "application/json"}
     )
 
+    # expected JSON schema for recipe
+    RECIPE_SCHEMA = {
+        "type": "object",
+        "required": ["recipe_name", "prep_time", "ingredients", "instructions"],
+        "properties": {
+            "recipe_name": {"type": "string"},
+            "prep_time": {"type": "string"},
+            "ingredients": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 1
+            },
+            "instructions": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 1
+            }
+        },
+        "additionalProperties": False
+    }
+
     text = response.text
     try:
-        return json.loads(text)
+        obj = json.loads(text)
     except json.JSONDecodeError as e:
         print("JSON parse error:", e)
         print("Full model output:", text)
         m = re.search(r'(\{[\s\S]*\})', text)
         if m:
             try:
-                return json.loads(m.group(1))
+                obj = json.loads(m.group(1))
             except json.JSONDecodeError:
-                pass
-        raise RuntimeError("Model did not return valid JSON. See server logs for model output.")
+                raise RuntimeError("Model did not return valid JSON. See server logs for model output.")
+        else:
+            raise RuntimeError("Model did not return valid JSON. See server logs for model output.")
+
+    # validate schema
+    try:
+        validate(instance=obj, schema=RECIPE_SCHEMA)
+    except ValidationError as e:
+        print("Model output failed schema validation:", e)
+        print("Full model output:", text)
+        raise RuntimeError("Model returned JSON that does not match expected schema. See server logs.")
+
+    return obj
 
 def get_unsplash_image(recipe_name):
     query = urllib.parse.quote(f"{recipe_name} food")
@@ -89,22 +122,7 @@ def get_unsplash_image(recipe_name):
         data = r.json()
         results = data.get("results") or []
         if results:
-            first = results[0]
-            # preferred: object with 'urls' dict
-            if isinstance(first, dict):
-                urls = first.get("urls") or {}
-                # prefer common sizes in order
-                for key_name in ("regular", "full", "small", "thumb"):
-                    if urls.get(key_name):
-                        return urls[key_name]
-                # if urls exists but keys missing, try any value
-                if urls:
-                    for v in urls.values():
-                        return v
-            # if API returned a plain string or unexpected structure, coerce to string
-            if isinstance(first, str):
-                return first
-            return str(first)
+            return results[0]["urls"]["regular"]
     except requests.RequestException as e:
         print("Unsplash request failed:", e)
 
